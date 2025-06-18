@@ -258,7 +258,131 @@ def get_deep_detraction_rate(country_code: str):
         
     return {"error": f"Deep Detraction Rate for Vodafone in {country_code} not found. Supported country codes are UK, DE, PT."}
 
-tools = [get_weather, get_stock_price, get_nps_score, get_deep_detraction_rate]
+@tool
+def get_churn_rate(country_code: str):
+    """Get the Churn Rate for Vodafone in a given country, including a historical trend. This is a mocked function and supports country codes 'UK', 'DE', and 'PT'."""
+    # This is a mock implementation
+    mock_churn_data = {
+        "UK": {
+            "company_name": "Vodafone UK", 
+            "churn_rate": 2.8,
+            "churn_rate_formatted": "2.8%",
+            "status": "improving",
+            "benchmark": {
+                "industry_average": 3.2,
+                "target": 2.5,
+                "status": "above_target"
+            },
+            "trend": [
+                {"date": "2024-01", "rate": 3.5, "month_name": "January 2024"},
+                {"date": "2024-02", "rate": 3.2, "month_name": "February 2024"},
+                {"date": "2024-03", "rate": 3.0, "month_name": "March 2024"},
+                {"date": "2024-04", "rate": 2.9, "month_name": "April 2024"},
+                {"date": "2024-05", "rate": 2.8, "month_name": "May 2024"},
+            ],
+            "trend_analysis": {
+                "direction": "decreasing",
+                "change_absolute": -0.7,
+                "change_percentage": -20.0,
+                "description": "The churn rate has decreased from 3.5% to 2.8% over the period, showing strong customer retention improvement.",
+                "projection": "If the current trend continues, the rate may reach 2.6% by next month."
+            },
+            "insights": [
+                "Churn rate has improved by 0.7 percentage points over 5 months",
+                "Currently 0.4 points below industry average of 3.2%",
+                "Still 0.3 points above target of 2.5%",
+                "Strong customer retention momentum building"
+            ],
+            "period": {
+                "start_date": "2024-01",
+                "end_date": "2024-05",
+                "duration_months": 5
+            }
+        },
+        "DE": {
+            "company_name": "Vodafone Germany", 
+            "churn_rate": 4.2,
+            "churn_rate_formatted": "4.2%",
+            "status": "stable",
+            "benchmark": {
+                "industry_average": 4.1,
+                "target": 3.5,
+                "status": "above_target"
+            },
+            "trend": [
+                {"date": "2024-01", "rate": 4.3, "month_name": "January 2024"},
+                {"date": "2024-02", "rate": 4.1, "month_name": "February 2024"},
+                {"date": "2024-03", "rate": 4.2, "month_name": "March 2024"},
+                {"date": "2024-04", "rate": 4.3, "month_name": "April 2024"},
+                {"date": "2024-05", "rate": 4.2, "month_name": "May 2024"},
+            ],
+            "trend_analysis": {
+                "direction": "stable",
+                "change_absolute": -0.1,
+                "change_percentage": -2.3,
+                "description": "The churn rate has remained relatively stable around 4.2% with minor fluctuations.",
+                "projection": "Rate expected to continue around 4.1-4.3% range in coming months."
+            },
+            "insights": [
+                "Churn rate has been relatively stable over 5 months",
+                "Slightly above industry average of 4.1%",
+                "0.7 points above target of 3.5%",
+                "Needs focused retention initiatives to improve"
+            ],
+            "period": {
+                "start_date": "2024-01",
+                "end_date": "2024-05",
+                "duration_months": 5
+            }
+        },
+        "PT": {
+            "company_name": "Vodafone Portugal", 
+            "churn_rate": 3.6,
+            "churn_rate_formatted": "3.6%",
+            "status": "declining",
+            "benchmark": {
+                "industry_average": 3.4,
+                "target": 3.0,
+                "status": "above_target"
+            },
+            "trend": [
+                {"date": "2024-01", "rate": 3.1, "month_name": "January 2024"},
+                {"date": "2024-02", "rate": 3.3, "month_name": "February 2024"},
+                {"date": "2024-03", "rate": 3.4, "month_name": "March 2024"},
+                {"date": "2024-04", "rate": 3.5, "month_name": "April 2024"},
+                {"date": "2024-05", "rate": 3.6, "month_name": "May 2024"},
+            ],
+            "trend_analysis": {
+                "direction": "increasing",
+                "change_absolute": 0.5,
+                "change_percentage": 16.1,
+                "description": "The churn rate has increased from 3.1% to 3.6% over the period, indicating deteriorating customer retention.",
+                "projection": "If the current trend continues, the rate may reach 3.8% by next month."
+            },
+            "insights": [
+                "Churn rate has worsened by 0.5 percentage points over 5 months",
+                "Now above industry average of 3.4%",
+                "0.6 points above target of 3.0%",
+                "Urgent attention needed to reverse retention trend"
+            ],
+            "period": {
+                "start_date": "2024-01",
+                "end_date": "2024-05",
+                "duration_months": 5
+            }
+        },
+    }
+
+    code = country_code.upper()
+    if code in mock_churn_data:
+        response_data = mock_churn_data[code].copy()
+        response_data["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        response_data["last_updated_formatted"] = datetime.now(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
+        return response_data
+        
+    return {"error": f"Churn Rate for Vodafone in {country_code} not found. Supported country codes are UK, DE, PT."}
+
+tools = [get_weather, get_stock_price, get_nps_score, get_deep_detraction_rate, get_churn_rate]
 
 SYSTEM_PROMPT = """You are a helpful assistant. 
 You are able to call the following tools:
@@ -266,6 +390,7 @@ You are able to call the following tools:
 - get_stock_price: Get current stock price and related information for a stock symbol. This is a mocked function and only supports 'AAPL'.
 - get_nps_score: Get the Net Promoter Score (NPS) for Vodafone in a given country. This is a mocked function and supports country codes 'UK', 'DE', and 'PT'.
 - get_deep_detraction_rate: Get the Deep Detraction Rate and a historical trend for Vodafone in a given country. This is a mocked function and supports country codes 'UK', 'DE', and 'PT'.
+- get_churn_rate: Get the Churn Rate and a historical trend for Vodafone in a given country. This is a mocked function and supports country codes 'UK', 'DE', and 'PT'.
 """
 
 system_message = SystemMessage(content=SYSTEM_PROMPT)

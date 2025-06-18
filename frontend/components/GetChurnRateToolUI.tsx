@@ -3,7 +3,7 @@
 import { makeAssistantToolUI } from '@assistant-ui/react';
 import { DeepDetractionRateChart } from './charts/DeepDetractionRateChart';
 
-type GetDeepDetractionRateToolArgs = {
+type GetChurnRateToolArgs = {
   country_code: string;
 };
 
@@ -27,10 +27,10 @@ type TrendAnalysis = {
   projection: string;
 };
 
-type GetDeepDetractionRateToolResult = {
+type GetChurnRateToolResult = {
   company_name: string;
-  deep_detraction_rate: number | string;  // Support both formats
-  deep_detraction_rate_formatted?: string;
+  churn_rate: number | string;  // Support both formats
+  churn_rate_formatted?: string;
   status?: string;
   benchmark?: BenchmarkData;
   trend: TrendData[];
@@ -69,26 +69,23 @@ const StatusBadge = ({ status }: { status?: string }) => {
   );
 };
 
-const FollowUpQuestions = ({ result }: { result: GetDeepDetractionRateToolResult }) => {
+const FollowUpQuestions = ({ result }: { result: GetChurnRateToolResult }) => {
   const questions = [];
-  const metricName = result.company_name.includes('DDR') || window.location.href.includes('deep') ? 'DDR' : 
-                   result.company_name.includes('churn') || window.location.href.includes('churn') ? 'churn rate' : 
-                   'this metric';
   
   // Handle both old and new data formats for comparisons
-  const currentRate = typeof result.deep_detraction_rate === 'number' 
-    ? result.deep_detraction_rate 
-    : parseFloat(result.deep_detraction_rate?.toString().replace('%', '') || '0');
+  const currentRate = typeof result.churn_rate === 'number' 
+    ? result.churn_rate 
+    : parseFloat(result.churn_rate?.toString().replace('%', '') || '0');
   
   // Segmentation questions
-  questions.push(`Do you want to split this ${metricName} by product or customer type?`);
+  questions.push(`Do you want to split this churn rate by product or customer type?`);
   questions.push(`Would you like to see this broken down by customer segment (enterprise vs consumer)?`);
   questions.push(`Do you want to analyze this by subscription plan (prepaid vs postpaid)?`);
   
   // Comparative analysis based on performance
   if (result.benchmark) {
     if (currentRate > result.benchmark.industry_average) {
-      questions.push(`How does ${result.company_name}'s ${metricName} compare to top-performing competitors?`);
+      questions.push(`How does ${result.company_name}'s churn rate compare to top-performing competitors?`);
     } else {
       questions.push(`How does this compare to other Vodafone markets?`);
     }
@@ -97,13 +94,13 @@ const FollowUpQuestions = ({ result }: { result: GetDeepDetractionRateToolResult
   // Trend-based questions
   if (result.trend_analysis) {
     if (result.trend_analysis.direction === 'decreasing') {
-      questions.push(`What initiatives are driving this ${metricName} improvement?`);
-      questions.push(`What's the ROI impact of reaching the target rate?`);
+      questions.push(`What retention initiatives are driving this churn rate improvement?`);
+      questions.push(`What's the ROI impact of reaching the target retention rate?`);
     } else if (result.trend_analysis.direction === 'increasing') {
-      questions.push(`What are the main drivers behind this ${metricName} increase?`);
-      questions.push(`What immediate actions could reverse this trend?`);
+      questions.push(`What are the main drivers behind this churn rate increase?`);
+      questions.push(`What immediate retention actions could reverse this trend?`);
     } else {
-      questions.push(`What could drive breakthrough improvement in this ${metricName}?`);
+      questions.push(`What could drive breakthrough improvement in customer retention?`);
     }
   }
   
@@ -112,8 +109,8 @@ const FollowUpQuestions = ({ result }: { result: GetDeepDetractionRateToolResult
   questions.push(`How does this compare to the same period last year?`);
   
   // Root cause and correlation
-  questions.push(`How does this ${metricName} correlate with customer satisfaction scores?`);
-  questions.push(`Would you like to see the impact of recent campaigns on this metric?`);
+  questions.push(`How does this churn rate correlate with customer satisfaction scores?`);
+  questions.push(`Would you like to see the impact of recent retention campaigns?`);
   
   // Action-oriented questions
   if (result.benchmark?.target) {
@@ -126,7 +123,7 @@ const FollowUpQuestions = ({ result }: { result: GetDeepDetractionRateToolResult
   questions.push(`What's the projected impact if current trends continue?`);
   
   // Customer journey and touchpoint analysis
-  questions.push(`Which customer touchpoints most influence this ${metricName}?`);
+  questions.push(`Which customer touchpoints most influence churn decisions?`);
   questions.push(`Do you want to analyze this by customer tenure (new vs existing)?`);
 
   return (
@@ -156,16 +153,16 @@ const FollowUpQuestions = ({ result }: { result: GetDeepDetractionRateToolResult
   );
 };
 
-const DdrDisplay = ({ result }: { result: GetDeepDetractionRateToolResult }) => {
+const ChurnRateDisplay = ({ result }: { result: GetChurnRateToolResult }) => {
   if (!result) return null;
 
   // Handle both old and new data formats
-  const currentRate = typeof result.deep_detraction_rate === 'number' 
-    ? result.deep_detraction_rate 
-    : parseFloat(result.deep_detraction_rate?.toString().replace('%', '') || '0');
+  const currentRate = typeof result.churn_rate === 'number' 
+    ? result.churn_rate 
+    : parseFloat(result.churn_rate?.toString().replace('%', '') || '0');
   
-  const formattedRate = result.deep_detraction_rate_formatted || 
-    (typeof result.deep_detraction_rate === 'string' ? result.deep_detraction_rate : `${currentRate}%`);
+  const formattedRate = result.churn_rate_formatted || 
+    (typeof result.churn_rate === 'string' ? result.churn_rate : `${currentRate}%`);
 
   // Calculate basic trend analysis if not provided
   const trendData = result.trend || [];
@@ -184,7 +181,7 @@ const DdrDisplay = ({ result }: { result: GetDeepDetractionRateToolResult }) => 
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">{result.company_name}</h2>
-            <p className="text-sm text-gray-600 mt-1">Deep Detraction Rate</p>
+            <p className="text-sm text-gray-600 mt-1">Churn Rate</p>
           </div>
         </div>
       </div>
@@ -229,10 +226,10 @@ const DdrDisplay = ({ result }: { result: GetDeepDetractionRateToolResult }) => 
   );
 };
 
-export const GetDeepDetractionRateToolUI = makeAssistantToolUI<GetDeepDetractionRateToolArgs, GetDeepDetractionRateToolResult>({
-  toolName: 'get_deep_detraction_rate',
+export const GetChurnRateToolUI = makeAssistantToolUI<GetChurnRateToolArgs, GetChurnRateToolResult>({
+  toolName: 'get_churn_rate',
   render: ({ result }) => {
     if (!result) return <LoadingSpinner />;
-    return <DdrDisplay result={result} />;
+    return <ChurnRateDisplay result={result} />;
   },
 }); 
