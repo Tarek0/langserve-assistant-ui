@@ -65,10 +65,9 @@ const StockPriceDisplay = ({ result }: { result: GetStockPriceToolResult }) => {
 };
 
 export const GetStockPriceToolUI = makeAssistantToolUI<GetStockPriceToolArgs, GetStockPriceToolResult>({
-    toolName: "get_stock_price",
-    render: ({ result }) => {
-        console.log('result', result);
-        if (!result) return <LoadingSpinner />;
-        return <StockPriceDisplay result={result} />;
-    }
+  toolName: 'get_stock_price',
+  render: ({ result }) => {
+    if (!result) return <LoadingSpinner />;
+    return <StockPriceDisplay result={result} />;
+  },
 });
